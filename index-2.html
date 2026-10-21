@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Maa Ki Rasoi – Home Tiffin Service</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Mukta:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fffaf0;--surface:#ffffff;--ink:#1f2a24;--muted:#5b665f;--brand:#14513f;--on-brand:#ffffff;--accent:#f2b705;--on-accent:#2a2000;--line:#e6dfcc;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101a15;--surface:#18251e;--ink:#f3efe2;--muted:#a9b5ac;--brand:#2f9a78;--on-brand:#06140e;--accent:#f2b705;--on-accent:#2a2000;--line:#2a3a31;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#101a15;--surface:#18251e;--ink:#f3efe2;--muted:#a9b5ac;--brand:#2f9a78;--on-brand:#06140e;--accent:#f2b705;--on-accent:#2a2000;--line:#2a3a31;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Mukta",system-ui,sans-serif;font-size:18px;line-height:1.55}
+h1,h2,h3{font-family:"Baloo 2","Trebuchet MS",sans-serif;line-height:1.1;margin:0}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+section{padding:40px 0;border-top:1px solid var(--line)}
+h2{font-size:2rem;margin-bottom:6px}
+.sub{color:var(--muted);margin:0 0 20px}
+.hero{padding:44px 0 36px;background:var(--brand);color:var(--on-brand);border:0}
+.hero h1{font-size:clamp(2.6rem,12vw,4.4rem);font-weight:800}
+.hero p{font-size:1.15rem;max-width:30em;margin:14px 0 22px}
+.btn{display:inline-block;background:var(--accent);color:var(--on-accent);font-family:"Baloo 2",sans-serif;font-weight:700;font-size:1.1rem;padding:12px 22px;border-radius:999px;text-decoration:none;border:0;cursor:pointer}
+.btn:focus-visible,.tab:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px}
+.tab{flex:0 0 auto;padding:8px 16px;border-radius:999px;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.thali{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:20px}
+.thali h3{font-size:1.4rem;margin-bottom:8px}
+.thali ul{margin:0;padding-left:1.1em}
+.today{display:none;color:var(--brand);font-weight:700;margin-bottom:6px}
+.plans{display:grid;gap:12px}
+.plan{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.plan b{font-family:"Baloo 2",sans-serif;font-size:1.2rem}
+.price{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.5rem;color:var(--brand);white-space:nowrap}
+.plan small{color:var(--muted);display:block}
+form{display:grid;gap:12px;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:20px}
+label{font-weight:600;display:grid;gap:4px}
+select,input{font:inherit;padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+footer{padding:28px 0 40px;color:var(--muted);font-size:.95rem;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <h1>Maa Ki Rasoi</h1>
+    <p>Fresh home-cooked tiffin, delivered hot to your office or PG. Less oil, no preservatives, made every morning.</p>
+    <a class="btn" href="#order">Order your tiffin</a>
+  </div>
+</header>
+
+<main class="wrap">
+<section id="menu">
+  <h2>This week’s menu</h2>
+  <p class="sub">Every thali comes with 3 rotis, rice, dal, sabzi, salad and one sweet on Sundays.</p>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div class="thali" id="thali" role="tabpanel" aria-live="polite"></div>
+</section>
+
+<section id="plans">
+  <h2>Plans and prices</h2>
+  <p class="sub">Pay weekly or monthly. Skip a day by messaging before 8 pm.</p>
+  <div class="plans">
+    <div class="plan"><div><b>Single meal</b><small>Try it once</small></div><div class="price">₹90</div></div>
+    <div class="plan"><div><b>Lunch, 6 days</b><small>Mon to Sat</small></div><div class="price">₹480</div></div>
+    <div class="plan"><div><b>Lunch + dinner, monthly</b><small>26 days, best value</small></div><div class="price">₹4,200</div></div>
+  </div>
+</section>
+
+<section id="order">
+  <h2>Place your order</h2>
+  <p class="sub">Fill this in and we get your order instantly. No app or signup needed.</p>
+  <form id="f">
+    <label>Your name<input id="n" required autocomplete="name"></label>
+    <label>Plan
+      <select id="p">
+        <option>Single meal (₹90)</option>
+        <option>Lunch, 6 days (₹480)</option>
+        <option>Lunch + dinner, monthly (₹4,200)</option>
+      </select>
+    </label>
+    <label>Delivery address<input id="a" required autocomplete="street-address"></label>
+    <button class="btn" type="submit">Place order</button>
+  </form>
+  <p id="msg" role="status" style="font-weight:600;margin-top:14px"></p>
+  <a id="wa" class="btn" style="display:none" href="#">Also confirm by email</a>
+</section>
+
+<section id="visit">
+  <h2>Find us</h2>
+  <p class="sub">Shop 4, Gandhi Nagar Main Road, Your City<br>Open daily, 7 am to 9 pm<br>Delivery within 5 km</p>
+</section>
+</main>
+
+<footer><div class="wrap">© 2026 Maa Ki Rasoi. FSSAI licence no. 12345678901234</div></footer>
+
+<script>
+var EMAIL="legendcaptain36@gmail.com";
+var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var menu={
+Monday:["Dal tadka","Aloo gobi","Jeera rice"],
+Tuesday:["Rajma","Bhindi fry","Steamed rice"],
+Wednesday:["Moong dal","Paneer bhurji","Jeera rice"],
+Thursday:["Kadhi pakora","Mix veg","Steamed rice"],
+Friday:["Chole","Lauki sabzi","Pulao"],
+Saturday:["Sambar","Aloo matar","Lemon rice"],
+Sunday:["Dal makhani","Paneer butter masala","Rice and gulab jamun"]};
+var tabs=document.getElementById("tabs"),thali=document.getElementById("thali");
+var todayName=days[new Date().getDay()];
+function show(d){
+  Array.prototype.forEach.call(tabs.children,function(b){b.setAttribute("aria-selected",b.textContent===d?"true":"false")});
+  thali.innerHTML=(d===todayName?'<div class="today" style="display:block">Today’s thali</div>':'')+"<h3>"+d+"</h3><ul>"+menu[d].map(function(i){return"<li>"+i+"</li>"}).join("")+"</ul>";
+}
+Object.keys(menu).forEach(function(d){
+  var b=document.createElement("button");b.className="tab";b.type="button";b.setAttribute("role","tab");b.textContent=d;
+  b.onclick=function(){show(d)};tabs.appendChild(b);
+});
+show(todayName);
+var HOOK="https://hook.eu1.make.com/hjvm8hgsf9mmtho7zd7qb4969yzn2b53";
+document.getElementById("f").addEventListener("submit",function(e){
+  e.preventDefault();
+  var btn=e.target.querySelector("button"),msg=document.getElementById("msg");
+  var n=document.getElementById("n").value,p=document.getElementById("p").value,a=document.getElementById("a").value;
+  btn.disabled=true;btn.textContent="Sending...";
+  var body=new URLSearchParams({name:n,plan:p,address:a});
+  fetch(HOOK,{method:"POST",mode:"no-cors",body:body}).then(function(){
+    msg.textContent="Thank you, "+n+"! Your order is received. We will call you soon.";
+    e.target.reset();
+  }).catch(function(){
+    msg.textContent="Could not send. Please use the email button below.";
+  }).then(function(){
+    btn.disabled=false;btn.textContent="Place order";
+    var t="Hi, I would like to order a tiffin.\nName: "+n+"\nPlan: "+p+"\nAddress: "+a;
+    document.getElementById("wa").href="mailto:"+EMAIL+"?subject="+encodeURIComponent("New tiffin order: "+n)+"&body="+encodeURIComponent(t);
+    document.getElementById("wa").style.display="inline-block";
+  });
+});
+</script>
+</body>
+</html>
