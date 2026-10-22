@@ -50,14 +50,13 @@ html{scroll-behavior:smooth}
 <header><div class="wrap"><div class="logo" id="logo"></div><nav><a href="#menu">Menu</a><a href="#plans">Plans</a><a href="#order">Order</a></nav></div></header>
 <main class="wrap">
 <div class="top"><h1 id="tag"></h1><p id="about"></p><a class="btn" href="#order">Order now</a></div>
-<section id="menu"><h2>Menu</h2><p class="sub" id="menunote"></p>
+<section id="menu"><h2>Menu and prices</h2><p class="sub" id="menunote"></p>
   <div class="tabs" role="tablist" id="tabs"></div>
   <div class="card" id="thali" role="tabpanel" aria-live="polite"></div></section>
-<section id="plans"><h2>Plans and prices</h2><div class="plans" id="planlist"></div></section>
 <section id="order"><h2>Place your order</h2><p class="sub">We receive your order instantly. No signup needed.</p>
   <form id="f">
     <label>Your name<input id="n" required autocomplete="name"></label>
-    <label>Plan<select id="p"></select></label>
+    <label>What would you like to order?<input id="p" required placeholder="Example: item name and quantity"></label>
     <label>Delivery address<input id="a" required autocomplete="street-address"></label>
     <div><button class="btn" type="submit">Place order</button></div>
   </form>
@@ -67,36 +66,42 @@ html{scroll-behavior:smooth}
 </main>
 <footer><div class="wrap" id="foot"></div></footer>
 <script>
-var days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 function $(i){return document.getElementById(i)}
-fetch("shop.json?v="+Date.now()).then(function(r){return r.json()}).then(init).catch(function(){
-  $("tag").textContent="Page is loading";$("about").textContent="Please refresh. If this stays, the shop details file is missing.";
-});
-function init(c){
+function csv(t){var r=[],row=[],c="",q=false,i,ch;for(i=0;i<t.length;i++){ch=t[i];
+  if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}
+  else if(ch=='"')q=true;else if(ch==","){row.push(c);c=""}
+  else if(ch=="\n"){row.push(c);r.push(row);row=[];c=""}else if(ch!="\r")c+=ch}
+  if(c||row.length){row.push(c);r.push(row)}return r}
+function loadItems(c){
+  if(!c.sheetCsv)return Promise.resolve([]);
+  return fetch(c.sheetCsv).then(function(r){return r.text()}).then(function(t){
+    var rows=csv(t).slice(1),out=[];
+    rows.forEach(function(r){var cat=(r[0]||"").trim(),it=(r[1]||"").trim(),pr=(r[2]||"").trim();if(it)out.push({category:cat||"Menu",item:it,price:pr})});
+    return out}).catch(function(){return []});
+}
+fetch("shop.json?v="+Date.now()).then(function(r){return r.json()}).then(function(c){
+  return loadItems(c).then(function(items){init(c,items)})}).catch(function(){
+  $("tag").textContent="Page is loading";$("about").textContent="Please refresh the page."});
+function init(c,items){
   document.title=c.name+" – Home Tiffin Service";
   var parts=c.name.split(" ");var last=parts.pop();
   $("logo").textContent=parts.join(" ")+" ";var sp=document.createElement("span");sp.textContent=last;$("logo").appendChild(sp);
   $("tag").textContent=c.tagline;$("about").textContent=c.about;
   $("visitinfo").textContent=c.address+" · "+c.hours;
   $("foot").textContent="© 2026 "+c.name;
-  $("menunote").textContent=c.menuNote||"";
-  var names=Object.keys(c.menu||{}),tabs=$("tabs"),thali=$("thali");
-  var today=days[new Date().getDay()];
-  function show(d){
-    Array.prototype.forEach.call(tabs.children,function(b){b.setAttribute("aria-selected",b.textContent===d?"true":"false")});
+  var groups={},names=[],tabs=$("tabs"),thali=$("thali");
+  items.forEach(function(x){if(!groups[x.category]){groups[x.category]=[];names.push(x.category)}groups[x.category].push(x)});
+  var today=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][new Date().getDay()];
+  function show(g){
+    Array.prototype.forEach.call(tabs.children,function(b){b.setAttribute("aria-selected",b.textContent===g?"true":"false")});
     thali.textContent="";
-    if(d===today){var t=document.createElement("div");t.className="today";t.style.display="block";t.textContent="TODAY";thali.appendChild(t)}
-    var h=document.createElement("h3");h.textContent=d;thali.appendChild(h);
-    var u=document.createElement("ul");c.menu[d].forEach(function(i){var l=document.createElement("li");l.textContent=i;u.appendChild(l)});thali.appendChild(u);
+    var h=document.createElement("h3");h.textContent=g;thali.appendChild(h);
+    groups[g].forEach(function(x){var d=document.createElement("div");d.className="plan";d.style.border="0";d.style.padding="6px 0";
+      var l=document.createElement("div");l.textContent=x.item;d.appendChild(l);
+      if(x.price){var p=document.createElement("div");p.className="price";p.textContent=x.price;d.appendChild(p)}thali.appendChild(d)});
   }
-  if(!names.length){thali.textContent="Menu coming soon. Please contact us for today’s food."}
-  else{names.forEach(function(d){var b=document.createElement("button");b.className="tab";b.type="button";b.setAttribute("role","tab");b.textContent=d;b.onclick=function(){show(d)};tabs.appendChild(b)});show(names.indexOf(today)>-1?today:names[0])}
-  c.plans.forEach(function(p){
-    var row=document.createElement("div");row.className="plan";
-    var l=document.createElement("div");l.textContent=p.name;var s=document.createElement("small");s.textContent=p.note||"";l.appendChild(s);
-    var pr=document.createElement("div");pr.className="price";pr.textContent=p.price;row.appendChild(l);row.appendChild(pr);$("planlist").appendChild(row);
-    var o=document.createElement("option");o.textContent=p.name+" ("+p.price+")";$("p").appendChild(o);
-  });
+  if(!names.length){thali.textContent="Menu and prices coming soon. Please contact us to order."}
+  else{names.forEach(function(g){var b=document.createElement("button");b.className="tab";b.type="button";b.setAttribute("role","tab");b.textContent=g;b.onclick=function(){show(g)};tabs.appendChild(b)});show(names.indexOf(today)>-1?today:names[0])}
   $("f").addEventListener("submit",function(e){
     e.preventDefault();
     var btn=e.target.querySelector("button"),msg=$("msg");
@@ -107,7 +112,7 @@ function init(c){
       msg.textContent="Thank you, "+n+". Your order is received. We will call you soon.";e.target.reset();
     }).catch(function(){msg.textContent="Could not send. Please use the email button below."}).then(function(){
       btn.disabled=false;btn.textContent="Place order";
-      var t="Hi, I would like to order a tiffin.\nName: "+n+"\nPlan: "+p+"\nAddress: "+a;
+      var t="Hi, I would like to order.\nName: "+n+"\nOrder: "+p+"\nAddress: "+a;
       $("wa").href="mailto:"+c.email+"?subject="+encodeURIComponent("New order: "+n)+"&body="+encodeURIComponent(t);
       $("wa").style.display="inline-block";
     });
