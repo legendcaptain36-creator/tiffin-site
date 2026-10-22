@@ -1,0 +1,17 @@
+{
+  "_help": "Edit only the text inside the quotes. Menu: add a day like \"Monday\": [\"Dish 1\", \"Dish 2\"]. Leave menu as {} to show 'Menu coming soon'.",
+  "name": "Lunch Lane",
+  "tagline": "Fresh home-cooked tiffin, delivered",
+  "about": "Hot lunch and dinner for your office or PG.",
+  "menuNote": "",
+  "menu": {},
+  "plans": [
+    { "name": "Single meal", "note": "Try it once", "price": "₹90" },
+    { "name": "Lunch, 6 days", "note": "Mon to Sat", "price": "₹480" },
+    { "name": "Lunch + dinner, monthly", "note": "26 days", "price": "₹4,200" }
+  ],
+  "address": "Your shop address here",
+  "hours": "Open daily, 7 am to 9 pm",
+  "email": "legendcaptain36@gmail.com",
+  "orderWebhook": "https://hook.eu1.make.com/hjvm8hgsf9mmtho7zd7qb4969yzn2b53"
+}
